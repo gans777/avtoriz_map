@@ -19,7 +19,7 @@
 
 <p>Пароль <input type="password" v-model="reg_password"  placeholder="придумать пароль"><b-badge class="ml-2" variant = "danger"  v-if="!control_length_of_pass"> Слишком короткий. </b-badge ></p>
 
-<button name="submit"  class="btn btn-secondary reg_button" v-on:click="enter_registration_log_pass" v-if="control_length_of_login && control_length_of_pass" > Зарегистрироваться </button>
+<button name="submit"  class="btn btn-secondary reg_button" v-on:click="enter_registration_log_pass" v-if="control_length_of_login && control_length_of_pass" > Зарегистрироваться</button>
 </div>
                 <div v-on:click="close_form_registration" class="close_x" ><b-icon icon="x-circle" scale="2" variant="primary"></b-icon></div>
              </div>
