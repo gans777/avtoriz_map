@@ -29,6 +29,7 @@
 	</div>
 </template>
 <script type="text/javascript">
+	import axios from 'axios';
 	export	default {
 		data() {
 			return {
@@ -74,6 +75,11 @@
 			console.log("click-- Зарегистрироваться");
 			console.log("v-model login="+this.reg_login);
 			console.log("pass="+this.reg_password);
+			var params = new URLSearchParams();
+     params.append('label', 'register_new_user'); //записать  логин\пароль user's
+     params.append('login', this.reg_login);
+     params.append('password',this.reg_password);
+      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {console.log(response)})
 
 		},
 		close_form_registration(){
