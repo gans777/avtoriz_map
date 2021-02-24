@@ -2,6 +2,7 @@
 
 include '../functions/functions.php';
 include "../functions/connect.php";
+include "../functions/create_tables.php";
 if ($_POST['label']=='test'){
 echo json_encode('workkkk');
  }
@@ -13,7 +14,7 @@ if ($_POST['label']=='register_new_user'){
     if(mysqli_num_rows($query) > 0)
     {
         $err[] = "login_have";//Пользователь с таким логином уже существует в базе данных
-        echo json_encode($err[0]);
+        echo json_encode(array('login_have' => true, 'saved'=>false ));
     }
 
      if(count($err) == 0)
@@ -24,7 +25,7 @@ if ($_POST['label']=='register_new_user'){
         $password = md5(md5(trim($_POST['password'])));
 
         mysqli_query($link,"INSERT INTO deficit_users SET user_login='".$login."', user_password='".$password."'");
-        echo json_encode("saved");
+        echo json_encode(array('login_have' => false, 'saved'=> true));
     }
 
 }
@@ -48,9 +49,9 @@ if ($_POST['label']=='enter_log_pass'){
         // Записываем в БД новый хеш авторизации и IP
         @mysqli_query($link, "UPDATE deficit_users SET user_hash='".$hash."' "." WHERE user_id='".$data['user_id']."'");
           
-         echo json_encode(array('user_hash' => $hash,'user_login' => $login ));
+         echo json_encode(array('user_hash' => $hash,'user_login' => $login ,'wrong_log_pass'=>false));
 
-    } else { echo "login/pass is wrong.";} // здесь передалать на json
+    } else { echo json_encode(array('wrong_log_pass' => true ));}
 }
 
  if ($_POST['label'] == 'check_user_hash') {
@@ -58,7 +59,7 @@ if ($_POST['label']=='enter_log_pass'){
  	 $query = mysqli_query($link,"SELECT user_hash FROM deficit_users WHERE user_login='".mysqli_real_escape_string($link,$login)."' LIMIT 1");
       $data = mysqli_fetch_assoc($query);
        if ($data['user_hash'] == $_POST['user_hash']) {
-       	echo "user_hash_match";
-       }
+       	echo json_encode(array('user_hash_match'=>true,'user_login'=>$login));
+       } else {echo json_encode(array('user_hash_match'=>false));}
  }
 ?>
