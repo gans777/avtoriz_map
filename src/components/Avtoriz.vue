@@ -28,7 +28,8 @@
 <div class="reg_and_avt m-3 p-2" v-if="avtorization_on">
 	<p>Логин <input  type="text" v-model="login"  placeholder=" логин" ><b-badge class="ml-2" variant = "danger"  >  </b-badge > </p>
 
-<p>Пароль <input type="password" v-model="password"  placeholder=" пароль"><b-badge class="ml-2" variant = "danger" > </b-badge ></p>
+<p>Пароль <input type="password" v-model="password"  placeholder=" пароль"></p>
+<p v-if="login_or_pass_error"><b-badge class="ml-2" variant = "danger"  >логин или пароль ошибочен. </b-badge ></p>
 <button name="submit"  class="btn btn-secondary reg_button" v-on:click="enter_avt_log_pass" v-if="control_length_of_avt_login && control_length_of_avt_pass" >   вход   </button>
  <div v-on:click="close_form_registration" class="close_x" ><b-icon icon="x-circle" scale="2" variant="primary"></b-icon></div>
 </div>
@@ -60,6 +61,7 @@
 				control_length_of_pass: false,
 				control_length_of_avt_login: false,
 				control_length_of_avt_pass: false,
+				login_or_pass_error: false,
 				row_of_avtorization: true,
 				login_on: false,
 				user_login: null,
@@ -88,8 +90,15 @@
 					this.control_length_of_login=false;
 
 
-				} else {this.control_length_of_login=true; 
-					
+				} else {this.control_length_of_login=true;//"слишком короткий" 
+					var params = new URLSearchParams();
+     params.append('label', 'control_new_login'); //записать  логин\пароль user's
+     params.append('login', this.reg_login);
+     axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response =>{
+      if (response.data.login_have){
+   this.login_have=true;
+      }else {this.login_have=false;}
+      });
 				}
 				
 			},
@@ -97,9 +106,11 @@
 				if (this.reg_password.length < 6) {this.control_length_of_pass=false;} else {this.control_length_of_pass=true; }
 			},
 			login:function(){
+				this.login_or_pass_error=false;//чтоб от любого изменения исчезало сообщение об ошибке
 				if(this.login.length<5) {this.control_length_of_avt_login=false;} else {this.control_length_of_avt_login=true;}
 			},
 			password:function(){
+				this.login_or_pass_error=false;//чтоб от любого изменения исчезало сообщение об ошибке
 				if(this.password.length<6){this.control_length_of_avt_pass=false;}else {this.control_length_of_avt_pass=true;}
 			}
 		},
@@ -113,7 +124,7 @@
 			this.registration_on=false;
 			this.avtorization_on=true;
 		},
-		enter_registration_log_pass(){
+		enter_registration_log_pass(){ //form of registration new users
 			console.log("click-- Зарегистрироваться");
 			console.log("v-model login="+this.reg_login);
 			console.log("pass="+this.reg_password);
@@ -136,13 +147,13 @@
       })
 
 		},
-		enter_avt_log_pass(){
+		enter_avt_log_pass(){ //форма авторизации пользователя
 			console.log(this.login +' '+this.password);
 			var params = new URLSearchParams();
-     params.append('label', 'enter_log_pass'); //записать  логин\пароль user's
+     params.append('label', 'enter_log_pass'); 
      params.append('login', this.login);
      params.append('password',this.password);
-      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {console.log(response.data.wrong_log_pass);
+      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
       if (!response.data.wrong_log_pass) {
       console.log('user_hash= '+ response.data.user_hash + ' login= '+response.data.user_login);
       this.row_of_avtorization=false;
@@ -152,7 +163,7 @@
       localStorage.setItem('user_login', response.data.user_login);
       localStorage.setItem('user_hash', response.data.user_hash); 
 
-      } else {console.log('логин/пароль ошибочен');}
+      } else {this.login_or_pass_error=true;}
       })
 		},
 		close_form_registration(){

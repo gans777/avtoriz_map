@@ -6,7 +6,15 @@ include "../functions/create_tables.php";
 if ($_POST['label']=='test'){
 echo json_encode('workkkk');
  }
+if ($_POST['label']=='control_new_login'){
+  $query = mysqli_query($link, "SELECT user_id FROM deficit_users WHERE user_login='".mysqli_real_escape_string($link, $_POST['login'])."'");
+    if(mysqli_num_rows($query) > 0)
+    {
+        //Пользователь с таким логином уже существует в базе данных
+        echo json_encode(array('login_have' => true ));
+    }
 
+}
 if ($_POST['label']=='register_new_user'){ 
   $err = [];
       // проверяем, не сущестует ли пользователя с таким именем
