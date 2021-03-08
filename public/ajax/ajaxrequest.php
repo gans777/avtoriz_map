@@ -3,9 +3,7 @@
 include '../functions/functions.php';
 include "../functions/connect.php";
 include "../functions/create_tables.php";
-if ($_POST['label']=='test'){
-echo json_encode('workkkk');
- }
+
 if ($_POST['label']=='control_new_login'){
   $query = mysqli_query($link, "SELECT user_id FROM deficit_users WHERE user_login='".mysqli_real_escape_string($link, $_POST['login'])."'");
     if(mysqli_num_rows($query) > 0)
@@ -70,4 +68,12 @@ if ($_POST['label']=='enter_log_pass'){
        	echo json_encode(array('user_hash_match'=>true,'user_login'=>$login));
        } else {echo json_encode(array('user_hash_match'=>false));}
  }
+
+ if ($_POST['label'] == 'read_deficit_products') {
+  $sql = "SELECT name_of_product FROM deficit_products";
+               $res = mysqli_query($link,$sql);
+               $all_products = MysqliFetchAll($res);
+               echo json_encode($all_products);
+ }
+
 ?>

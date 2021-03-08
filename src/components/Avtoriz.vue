@@ -41,14 +41,19 @@
       <button type="button" class="btn btn-link log_out" v-on:click="exit">выход</button>
     </div>
     </div>
+    <div class="col">   <Products /> </div>
 </div><!--end row_of_user-->
 		</div>
 		
 	</div>
 </template>
 <script type="text/javascript">
-	import axios from 'axios';
+    import axios from 'axios';
+    import Products from './Products.vue'
 	export	default {
+		components: {
+    Products
+  },
 		data() {
 			return {
 				registration_on: false,
@@ -97,7 +102,7 @@
      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response =>{
       if (response.data.login_have){
    this.login_have=true;
-      }else {this.login_have=false;}
+      }else {this.login_have=false; }
       });
 				}
 				
