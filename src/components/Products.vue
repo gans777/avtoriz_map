@@ -1,15 +1,21 @@
 <template>
-  <select>
+  <div>
+  <select v-model="selected">
+    <option disabled value="">Выберите один из вариантов</option>
     <option v-for="(element,index) in deficits" :key="index">{{ element.name_of_product }}</option>
   </select>
+  <span>Выбрано: {{ selected }}</span>
+</div>
 </template>
 
 <script>
 import axios from 'axios'
 export default {
+  
   data() {
     return {
-      deficits: []
+      deficits: [],
+      selected: ''
     }
   },
   mounted() {
@@ -19,12 +25,17 @@ const params = new URLSearchParams();
      // console.log(response);
      //this.deficits=response.data;
      this.deficits=response.data.slice();
-      response.data.forEach(function(value){
-        console.log(value.name_of_product);
-        //this.deficits=slice(value.name_of_product);
-      });
+     
      });
-  }
+  },
+  watch: {
+    selected: function(){
+      console.log("значение категории= "+this.selected);
+      this.$emit('change-deficit',{
+        this_deficit: this.selected
+      });
+    }
+  } 
   }
 </script>
 

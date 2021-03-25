@@ -41,7 +41,8 @@
       <button type="button" class="btn btn-link log_out" v-on:click="exit">выход</button>
     </div>
     </div>
-    <div class="col">   <Products /> </div>
+    <div class="col">   <Products v-on:change-deficit="change_deficit"/> </div>
+    
 </div><!--end row_of_user-->
 		</div>
 		
@@ -52,7 +53,7 @@
     import Products from './Products.vue'
 	export	default {
 		components: {
-    Products
+    Products 
   },
 		data() {
 			return {
@@ -120,6 +121,9 @@
 			}
 		},
        methods:{
+       change_deficit(data){
+       console.log('родитель '+ data.this_deficit);
+       },
 		registration(){
 		this.registration_on=true;
 		this.avtorization_on=false;
