@@ -1,4 +1,6 @@
 <template>
+	<div>
+		{{deficit}} <!--stop here 0604-->
 	<yandex-map 
     :coords="coords"
     :zoom="10" 
@@ -11,6 +13,7 @@
       hint-content="some hint" 
     />
   </yandex-map>
+</div>
 </template>
 
 <script>
@@ -18,8 +21,7 @@ import axios from 'axios';
 export default {
 	props:['deficit'], //stop here604
   data: () => ({
-  name_cat: null,
-    coords: [
+      coords: [
       47.2313455,
       39.7232855
     ]
@@ -37,8 +39,8 @@ export default {
       });
 		},
 		watch: {
-			name_cat: function(){
-				console.log("я пропс="+this.deficit);//stop here 0604
+			deficit:function(){
+				console.log('i am props from watch '+ this.deficit);
 			}
 		},
    methods: {
