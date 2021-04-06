@@ -69,11 +69,52 @@ if ($_POST['label']=='enter_log_pass'){
        } else {echo json_encode(array('user_hash_match'=>false));}
  }
 
+/*считывает все наименования дефицитов*/
  if ($_POST['label'] == 'read_deficit_products') {
   $sql = "SELECT name_of_product FROM deficit_products";
                $res = mysqli_query($link,$sql);
                $all_products = MysqliFetchAll($res);
                echo json_encode($all_products);
  }
+
+if ($_POST['label'] =='read_markers_sql'){
+   $hash=$_POST['user_hash'];
+    $user_login=$_POST['user_login'];
+     $response = check_hash($link,$hash,$user_login); 
+  if (($response == $user_login)&&isset($_POST['product'])) {
+   $product=$_POST['product'];
+    $sql = "SELECT id_point,lan,lng,name FROM deficit_points WHERE product='".$product."'";
+     $res = mysqli_query($link,$sql);
+          $all_points = MysqliFetchAll($res);
+       
+
+       
+     for($j=0;$j<count($all_points);$j++) {
+      
+     
+        $id_point = $all_points[$j]['id_point'];
+          $sql = "SELECT purchase_descr,data_note,id_note,id_point FROM deficit_note WHERE id_point=".$id_point;
+          $res = mysqli_query($link,$sql);
+          $all_this_note = MysqliFetchAll($res);
+            
+          
+          for($i=0; $i< count($all_this_note);$i++){
+             $sql = "SELECT params_value FROM deficit_products_parametrs WHERE id_note=".$all_this_note[$i]['id_note'];
+           $res = mysqli_query($link,$sql);
+           $this_note_price=MysqliFetchAll($res);
+           //$all_this_note[$i]['price']= $this_note_price[0]['params_value'];
+            $all_this_note[$i]['params_value']= $this_note_price[0]['params_value'];
+            array_push($all_points[$j],$all_this_note[$i]);
+          }
+         
+     }
+   
+  
+ echo json_encode($all_points);
+ }  else {
+  if (!isset($_POST['product'])) {$product=false;}
+  echo json_encode(array('not_autorization'=>false,'product'=>$product));
+}
+}
 
 ?>

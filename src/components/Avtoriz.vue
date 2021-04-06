@@ -41,9 +41,14 @@
       <button type="button" class="btn btn-link log_out" v-on:click="exit">выход</button>
     </div>
     </div>
-    <div class="col">   <Products v-on:change-deficit="change_deficit"/> </div>
+    <div class="col">   <Products v-on:change-deficit="change_deficit" /> </div>
     
 </div><!--end row_of_user-->
+<div class="row" v-if="login_on">
+	<div class="col">
+		<MapDeficitYandex v-bind:deficit='this_deficit' />
+	</div>
+</div>
 		</div>
 		
 	</div>
@@ -51,9 +56,11 @@
 <script type="text/javascript">
     import axios from 'axios';
     import Products from './Products.vue'
+    import MapDeficitYandex from './MapDeficitYandex.vue'
 	export	default {
 		components: {
-    Products 
+    Products,
+    MapDeficitYandex 
   },
 		data() {
 			return {
@@ -71,7 +78,8 @@
 				row_of_avtorization: true,
 				login_on: false,
 				user_login: null,
-				login_have: false
+				login_have: false, // ниже этого уже не про авторизацию
+				this_deficit: null
 			}
 		},
 		mounted() {
@@ -121,8 +129,9 @@
 			}
 		},
        methods:{
-       change_deficit(data){
-       console.log('родитель '+ data.this_deficit);
+       change_deficit(data){ //получение названия категории
+       console.log(' i am родитель '+ data.this_deficit);
+       this.this_deficit=data.this_deficit;
        },
 		registration(){
 		this.registration_on=true;

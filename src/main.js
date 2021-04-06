@@ -3,7 +3,14 @@ import App from './App.vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
+import YmapPlugin from 'vue-yandex-maps'
+const settings = {
+  apiKey: '9c6493e9-1ae2-463f-9c8d-737e2f259b07',
+  lang: 'ru_RU',
+  coordorder: 'latlong',
+  version: '2.1'
+}
+Vue.use(YmapPlugin, settings)
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
