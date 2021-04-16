@@ -130,8 +130,8 @@
 		},
        methods:{
        change_deficit(data){ //получение названия категории
-       console.log(' i am родитель '+ data.this_deficit);
-       this.this_deficit=data.this_deficit;
+       console.log(' i am родитель Avtoriz '+ data.this_deficit);
+       this.this_deficit=data.this_deficit;//от сюда надо передать в props MapDeficitYandex...
        },
 		registration(){
 		this.registration_on=true;
