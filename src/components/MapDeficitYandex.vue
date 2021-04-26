@@ -58,6 +58,7 @@ points: [],  //stop here 2204
 console.log("расставляем маркеры");
      console.log(response);//расставить все маркеры
      console.log("i am after all_markers");
+     let points_temp=[];
      var count=0;
       response.data.forEach(function(value){
       count=count+1;
@@ -69,12 +70,15 @@ console.log("расставляем маркеры");
      point.coords=[Number(value['lan']),Number(value['lng'])];
      //console.log("lan="+value['lan'] +" lng="+value['lng']);
    //this.points.push(point);
-   console.log(count);
-   this.points[count]=count;
+   points_temp.push(point);
+  // console.log(count);
+   
      //this.points.push(point);
      //this.$set(this.points, 1, point);	
      });
-    console.log(this.points);//stop here 2504
+      this.points=points_temp;
+    console.log("это массив компонента points=");
+    console.log(this.points);//stop here 2704
       });
 			}
 		},
