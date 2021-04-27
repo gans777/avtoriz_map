@@ -6,7 +6,10 @@
     :zoom="10" 
     @click="onClick"
   >
- <!-- <ymap-marker v-for="point in points" :key="point.coords" ></ymap-marker>-->
+  <ymap-marker v-for="(point,index) in points" :key="index"
+:coords="point.coords"
+:marker-id="point.id_point"
+   ></ymap-marker>
     <!--<ymap-marker 
       :coords="coords" 
       marker-id="123" 
@@ -59,23 +62,16 @@ console.log("расставляем маркеры");
      console.log(response);//расставить все маркеры
      console.log("i am after all_markers");
      let points_temp=[];
-     var count=0;
-      response.data.forEach(function(value){
-      count=count+1;
-       let point={};
+       response.data.forEach(function(value){
+      let point={};
       point.id_point=value['id_point'];
      //console.log("id_point="+value['id_point']);
      point.name=value['name'];
      console.log("name= "+point.name);
      point.coords=[Number(value['lan']),Number(value['lng'])];
      //console.log("lan="+value['lan'] +" lng="+value['lng']);
-   //this.points.push(point);
-   points_temp.push(point);
-  // console.log(count);
-   
-     //this.points.push(point);
-     //this.$set(this.points, 1, point);	
-     });
+     points_temp.push(point);
+  });
       this.points=points_temp;
     console.log("это массив компонента points=");
     console.log(this.points);//stop here 2704
