@@ -6,9 +6,11 @@
     :zoom="10" 
     @click="onClick"
   >
-  <ymap-marker v-for="(point,index) in points" :key="index"
+  <ymap-marker v-for="(point,index) in points" 
+ :key="index"
 :coords="point.coords"
 :marker-id="point.id_point"
+:hint-content="point.name"
    ></ymap-marker>
     <!--<ymap-marker 
       :coords="coords" 
@@ -17,6 +19,11 @@
     />-->
 
   </yandex-map>
+  <div class="points_list">
+  <div class="info_point" v-for="(point,index) in points"
+:key="index"
+  >{{index+1}}.{{point.name}}</div>
+  </div>
 </div>
 </template>
 
@@ -26,7 +33,7 @@ export default {
 	props:['deficit'], 
   data() { 
   return{
-points: [],  //stop here 2204
+points: [],  
   coords: [47.23470683868971,
   39.72326724340817]
  }
@@ -57,13 +64,22 @@ points: [],  //stop here 2204
      params.append('user_login', user_login);
      params.append('user_hash', user_hash);
      params.append('product', this.deficit);
+     this.points=[];//очистка массива для профилактики
      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
+
 console.log("расставляем маркеры");
      console.log(response);//расставить все маркеры
      console.log("i am after all_markers");
      let points_temp=[];
        response.data.forEach(function(value){
       let point={};
+     let size = Object.keys(value).length;
+     for(var  i=(size-5);i >= 0;i--){
+     //console.log(value[i]);
+     point.[i]=value[i];// здесь описания покупокупок, время описания...
+              //  note+= html_wrap_note_this(value[i]);
+               // описание покупки для  показа в балоне маркера (описание покупки, время, цена)
+             } 
       point.id_point=value['id_point'];
      //console.log("id_point="+value['id_point']);
      point.name=value['name'];
@@ -74,7 +90,7 @@ console.log("расставляем маркеры");
   });
       this.points=points_temp;
     console.log("это массив компонента points=");
-    console.log(this.points);//stop here 2704
+    console.log(this.points);
       });
 			}
 		},
@@ -91,5 +107,19 @@ console.log("расставляем маркеры");
 <style scoped>
 .ymap-container {
   height: 400px;
+}
+.points_list {
+	display: flex;
+	flex-wrap: wrap;
+	border: 1px solid red;
+	background-color:#79c142;
+	min-height: 15px;
+}
+.info_point {
+	border: 1px solid green;
+	margin: 3px;
+	position: relative;
+	padding: 3px;
+	background-color: #7fdb39;
 }
 </style>
