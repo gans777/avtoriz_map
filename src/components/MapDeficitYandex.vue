@@ -19,7 +19,7 @@
     />-->
 
   </yandex-map>
-  <div class="points_list">
+  <div class="points_list" v-if="points_list_visible">
   <div class="info_point" v-for="(point,index) in points"
 :key="index"
   >{{index+1}}.{{point.name}}</div>
@@ -33,6 +33,7 @@ export default {
 	props:['deficit'], 
   data() { 
   return{
+  points_list_visible: false,  
 points: [],  
   coords: [47.23470683868971,
   39.72326724340817]
@@ -55,6 +56,7 @@ points: [],
 		},
 		watch: {
 			deficit:function(){
+        this.points_list_visible=true;
 				console.log('i am props from watch '+ this.deficit);
 				let user_login=localStorage.getItem('user_login'); 
  let user_hash=localStorage.getItem('user_hash');
