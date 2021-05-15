@@ -20,7 +20,7 @@
 
   </yandex-map>
   <div class="points_list" v-if="points_list_visible">
-  <div class="info_point" v-for="(point,index) in points"
+  <div class="info_point" v-on:click="point_menu"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
   >{{index+1}}.{{point.name}}</div>
   </div>
@@ -97,10 +97,14 @@ console.log("расставляем маркеры");
 			}
 		},
    methods: {
+    point_menu(e){
+      const attrValue = e.currentTarget.getAttribute('id');
+      console.log("i am click to point's menu="+attrValue);
+    },
     onClick(e) {
       this.coords = e.get('coords');
       this.name_cat=this.deficit;
-    },
+    }
   }
 };
 </script>
