@@ -22,7 +22,7 @@
   <div class="points_list" v-if="points_list_visible">
   <div class="info_point" v-on:click="point_menu"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
-  >{{index+1}}.{{point.name}}</div>
+  >{{index+1}}.{{point.name}}<div class="wrap_dropdown_info" v-show="point.isShow_point_menu">{{point.id_point}} zzzzz</div></div>
   </div>
 </div>
 </template>
@@ -88,6 +88,7 @@ console.log("расставляем маркеры");
      console.log("name= "+point.name);
      point.coords=[Number(value['lan']),Number(value['lng'])];
      //console.log("lan="+value['lan'] +" lng="+value['lng']);
+     point.isShow_point_menu=false;//по умолчанию менюю ппоинта не видно
      points_temp.push(point);
   });
       this.points=points_temp;
@@ -99,7 +100,15 @@ console.log("расставляем маркеры");
    methods: {
     point_menu(e){
       const attrValue = e.currentTarget.getAttribute('id');
+      //stop here 1705 isShow=true
+      this.points.some(function(value){
+        if (value.id_point==attrValue) {
+           value.isShow_point_menu=true;// stop here 1705
+           return
+         // value.isShow_point_menu=true;
+        }
       console.log("i am click to point's menu="+attrValue);
+    });
     },
     onClick(e) {
       this.coords = e.get('coords');
@@ -127,5 +136,12 @@ console.log("расставляем маркеры");
 	position: relative;
 	padding: 3px;
 	background-color: #7fdb39;
+}
+.wrap_dropdown_info {
+   position: absolute;
+  background-color:#bada55;;
+  z-index: 1;
+  width: 220px;
+  padding:5px;
 }
 </style>
