@@ -22,7 +22,9 @@
   <div class="points_list" v-if="points_list_visible">
   <div class="info_point" v-on:click="point_menu"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
-  >{{index+1}}.{{point.name}}<div class="wrap_dropdown_info" v-show="point.isShow_point_menu">{{point.id_point}} zzzzz</div></div>
+  >{{index+1}}.{{point.name}}<div class="wrap_dropdown_info" v-show="point.isShow_point_menu">{{point.id_point}} <div class="wrap_close_and_addinfo">x add edit</div>
+<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
+</div></div>
   </div>
 </div>
 </template>
@@ -74,14 +76,17 @@ console.log("расставляем маркеры");
      console.log("i am after all_markers");
      let points_temp=[];
        response.data.forEach(function(value){
-      let point={};
+    // let point={};
+     let point={purchase_desc:{}};
      let size = Object.keys(value).length;
      for(var  i=(size-5);i >= 0;i--){
-     //console.log(value[i]);
-     point.[i]=value[i];// здесь описания покупокупок, время описания...
+     console.log('ниже значения value['+i+']');
+        // point.[i]=value[i];// здесь описания покупок, время описания...
               //  note+= html_wrap_note_this(value[i]);
                // описание покупки для  показа в балоне маркера (описание покупки, время, цена)
-             } 
+             
+point.purchase_desc.[i]=value[i];
+                 } 
       point.id_point=value['id_point'];
      //console.log("id_point="+value['id_point']);
      point.name=value['name'];
@@ -143,5 +148,30 @@ console.log("расставляем маркеры");
   z-index: 1;
   width: 220px;
   padding:5px;
+}
+.wrap_note_this{
+	display: flex;
+	border:1px solid #246e1f;
+	line-height: 1.1;
+	font-size: 15px;
+	padding: 3px;
+	background-color:#bada55;
+	justify-content: space-between;
+}
+.note_this{
+
+}
+.data_note {
+	font-size: 10px;
+	display: flex;
+    justify-content: center; /*Центрирование по горизонтали*/
+    align-items: center;     /*Центрирование по вертикали */
+    margin-left: 4px;
+}
+.last_price {
+	display: flex;
+    justify-content: center; /*Центрирование по горизонтали*/
+    align-items: center;     /*Центрирование по вертикали */
+    margin-left:4px;
 }
 </style>
