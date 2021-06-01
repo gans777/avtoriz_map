@@ -3,6 +3,8 @@ import App from './App.vue'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import '@fortawesome/fontawesome-free/css/all.css' 
+import '@fortawesome/fontawesome-free/js/all.js'
 import YmapPlugin from 'vue-yandex-maps'
 const settings = {
   apiKey: '9c6493e9-1ae2-463f-9c8d-737e2f259b07',

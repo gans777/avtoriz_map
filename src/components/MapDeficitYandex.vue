@@ -22,7 +22,7 @@
   <div class="points_list" v-if="points_list_visible">
   <div class="info_point" v-on:click="point_menu"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
-  >{{index+1}}.{{point.name}}<div class="wrap_dropdown_info" v-show="point.isShow_point_menu">{{point.id_point}} <div class="wrap_close_and_addinfo">x add edit</div>
+  >{{index+1}}.{{point.name}}<div class="wrap_dropdown_info" v-show="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success mr-1"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> add edit</div>
 <div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
 </div></div>
   </div>
