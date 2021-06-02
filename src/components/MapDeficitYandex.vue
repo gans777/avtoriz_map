@@ -2,7 +2,7 @@
 	<div>
 		{{deficit}} 
 	<yandex-map 
-    :coords="coords"
+    :coords="center_coords"
     :zoom="10" 
     @click="onClick"
   >
@@ -20,9 +20,9 @@
 
   </yandex-map>
   <div class="points_list" v-if="points_list_visible">
-  <div class="info_point" v-on:click="point_menu"  :id="point.id_point" v-for="(point,index) in points"
+  <div class="info_point"   :id="point.id_point" v-for="(point,index) in points"
 :key="index"
-  >{{index+1}}.{{point.name}}<div class="wrap_dropdown_info" v-show="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success mr-1"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> add edit</div>
+  ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита'><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
 <div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
 </div></div>
   </div>
@@ -37,8 +37,7 @@ export default {
   return{
   points_list_visible: false,  
 points: [],  
-  coords: [47.23470683868971,
-  39.72326724340817]
+  center_coords: [47.23470683868971,39.72326724340817]
  }
   },
   mounted() {// нужене ли этот блок вообще???
@@ -51,8 +50,6 @@ points: [],
      params.append('user_hash', user_hash);
      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {console.log('ответ c базы о маркерах');
      console.log(response);
-
-     
          
       });
 		},
@@ -105,15 +102,23 @@ point.purchase_desc.[i]=value[i];
    methods: {
     point_menu(e){
       const attrValue = e.currentTarget.getAttribute('id');
-      //stop here 1705 isShow=true
-      this.points.some(function(value){
+      this.points.forEach(function(value){
         if (value.id_point==attrValue) {
-           value.isShow_point_menu=true;// stop here 1705
-           return
-         // value.isShow_point_menu=true;
-        }
-      console.log("i am click to point's menu="+attrValue);
+           value.isShow_point_menu=true;
+           //this.center_coords=value.coords;
+           //центр карты в данный поинт надо установить  stophere0306
+                  } else {value.isShow_point_menu=false;}
     });
+    },
+    close_this_point_menu(e){
+    const attrValue = e.currentTarget.closest(".info_point").getAttribute('id');
+    this.points.some(function(value){
+    if(value.id_point==attrValue){
+	value.isShow_point_menu=false;
+	return
+}
+    });
+
     },
     onClick(e) {
       this.coords = e.get('coords');
@@ -160,6 +165,13 @@ point.purchase_desc.[i]=value[i];
 }
 .note_this{
 
+}
+.wrap_close_and_addinfo{
+	display:flex;
+	padding: 0px;
+}
+.wrap_close_and_addinfo>button {
+	margin-left: 2px;
 }
 .data_note {
 	font-size: 10px;
