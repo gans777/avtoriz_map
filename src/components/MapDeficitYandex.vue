@@ -102,13 +102,22 @@ point.purchase_desc.[i]=value[i];
    methods: {
     point_menu(e){
       const attrValue = e.currentTarget.getAttribute('id');
+      console.log("координаты центра карты:");
+      console.log(this.center_coords);
+      let center_coords_temp=[];
       this.points.forEach(function(value){
         if (value.id_point==attrValue) {
            value.isShow_point_menu=true;
+           // теперь выделить маркер другим цветом 0406
            //this.center_coords=value.coords;
-           //центр карты в данный поинт надо установить  stophere0306
-                  } else {value.isShow_point_menu=false;}
+          // console.log("координаты центра карты:");
+          // console.log(this.center_coords);
+           console.log("координаты этой точки:");
+           console.log(value.coords);
+           center_coords_temp=value.coords;
+           } else {value.isShow_point_menu=false;}
     });
+     this.center_coords=center_coords_temp;
     },
     close_this_point_menu(e){
     const attrValue = e.currentTarget.closest(".info_point").getAttribute('id');

@@ -13,6 +13,7 @@
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.21.1",
     "core-js": "^3.6.5",
+    "font-awesome": "^4.7.0",
     "vue": "^2.6.12",
     "vue-fontawesome": "0.0.2",
     "vue-yandex-maps": "^0.10.10"
