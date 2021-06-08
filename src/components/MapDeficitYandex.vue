@@ -11,12 +11,8 @@
 :coords="point.coords"
 :marker-id="point.id_point"
 :hint-content="point.name"
+:icon="{color: 'green', content: 'cinema'}"
    ></ymap-marker>
-    <!--<ymap-marker 
-      :coords="coords" 
-      marker-id="123" 
-      hint-content="some hint" 
-    />-->
 
   </yandex-map>
   <div class="points_list" v-if="points_list_visible">
@@ -37,8 +33,8 @@ export default {
   return{
   points_list_visible: false,  
 points: [],  
-  center_coords: [47.23470683868971,39.72326724340817]
- }
+  center_coords: [47.23470683868971,39.72326724340817],
+  }
   },
   mounted() {// нужене ли этот блок вообще???
  let user_login=localStorage.getItem('user_login'); 
