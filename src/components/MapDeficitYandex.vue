@@ -3,7 +3,7 @@
 		{{deficit}} 
 	<yandex-map 
     :coords="center_coords"
-    :zoom="10" 
+    :zoom="11" 
     @click="onClick"
   >
   <ymap-marker v-for="(point,index) in points" 
@@ -11,12 +11,12 @@
 :coords="point.coords"
 :marker-id="point.id_point"
 :hint-content="point.name"
-:icon="{color: 'green', content: 'cinema'}"
+:options="{'iconColor': '#79c142'}"
    ></ymap-marker>
 
   </yandex-map>
   <div class="points_list" v-if="points_list_visible">
-  <div class="info_point"   :id="point.id_point" v-for="(point,index) in points"
+  <div class="info_point" :class="{info_point_active: point.isShow_point_menu}"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
   ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита'><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
 <div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
@@ -152,9 +152,12 @@ point.purchase_desc.[i]=value[i];
 	padding: 3px;
 	background-color: #7fdb39;
 }
+.info_point_active {
+  background-color: #bada55;
+}
 .wrap_dropdown_info {
    position: absolute;
-  background-color:#bada55;;
+  background-color:#bada55;
   z-index: 1;
   width: 220px;
   padding:5px;
