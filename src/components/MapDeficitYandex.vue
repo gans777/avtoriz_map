@@ -5,13 +5,15 @@
     :coords="center_coords"
     :zoom="11" 
     @click="onClick"
+    @map-was-initialized="mapInstance"
   >
   <ymap-marker v-for="(point,index) in points" 
  :key="index"
 :coords="point.coords"
 :marker-id="point.id_point"
 :hint-content="point.name"
-:options="{'iconColor': '#79c142'}"
+:markerIcon="{content:'zz'}"
+:options="point.isShow_point_menu_marker_color"
    ></ymap-marker>
 
   </yandex-map>
@@ -31,6 +33,7 @@ export default {
 	props:['deficit'], 
   data() { 
   return{
+    map_collection:{},
   points_list_visible: false,  
 points: [],  
   center_coords: [47.23470683868971,39.72326724340817],
@@ -51,6 +54,8 @@ points: [],
 		},
 		watch: {
 			deficit:function(){
+       // this.mapInstance.myMap.geoObjects.removeAll();
+      // this.map_collection.geoObjects.removeAll();//вроде сработало 
         this.points_list_visible=true;
 				console.log('i am props from watch '+ this.deficit);
 				let user_login=localStorage.getItem('user_login'); 
@@ -63,7 +68,7 @@ points: [],
      params.append('product', this.deficit);
      this.points=[];//очистка массива для профилактики
      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
-
+this.map_collection.geoObjects.removeAll();//удаляет все маркеры
 console.log("расставляем маркеры");
      console.log(response);//расставить все маркеры
      console.log("i am after all_markers");
@@ -87,6 +92,8 @@ point.purchase_desc.[i]=value[i];
      point.coords=[Number(value['lan']),Number(value['lng'])];
      //console.log("lan="+value['lan'] +" lng="+value['lng']);
      point.isShow_point_menu=false;//по умолчанию менюю ппоинта не видно
+     point.isShow_point_menu_marker_color={'iconColor': '#79c142',
+     iconContent:"zz"}//цвет маркера поинта
      points_temp.push(point);
   });
       this.points=points_temp;
@@ -104,6 +111,7 @@ point.purchase_desc.[i]=value[i];
       this.points.forEach(function(value){
         if (value.id_point==attrValue) {
            value.isShow_point_menu=true;
+           value.isShow_point_menu_marker_color={'iconColor': '#79f142'};
            // теперь выделить маркер другим цветом 0406
            //this.center_coords=value.coords;
           // console.log("координаты центра карты:");
@@ -111,7 +119,8 @@ point.purchase_desc.[i]=value[i];
            console.log("координаты этой точки:");
            console.log(value.coords);
            center_coords_temp=value.coords;
-           } else {value.isShow_point_menu=false;}
+           } else {value.isShow_point_menu=false;
+            value.isShow_point_menu_marker_color={'iconColor': '#79c142'};}
     });
      this.center_coords=center_coords_temp;
     },
@@ -120,10 +129,15 @@ point.purchase_desc.[i]=value[i];
     this.points.some(function(value){
     if(value.id_point==attrValue){
 	value.isShow_point_menu=false;
+  value.isShow_point_menu_marker_color={'iconColor': '#79c142'};//восстановление цвета маркера
 	return
 }
     });
 
+    },
+    mapInstance(e){
+      this.map_collection=e;
+      console.log("i am instans");
     },
     onClick(e) {
       this.coords = e.get('coords');
