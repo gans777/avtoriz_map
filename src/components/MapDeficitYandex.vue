@@ -12,8 +12,8 @@
 :coords="point.coords"
 :marker-id="point.id_point"
 :hint-content="point.name"
-:markerIcon="{content:'zz'}"
 :options="point.isShow_point_menu_marker_color"
+:properties="{iconContent: '22'}"
    ></ymap-marker>
 
   </yandex-map>
@@ -92,8 +92,7 @@ point.purchase_desc.[i]=value[i];
      point.coords=[Number(value['lan']),Number(value['lng'])];
      //console.log("lan="+value['lan'] +" lng="+value['lng']);
      point.isShow_point_menu=false;//по умолчанию менюю ппоинта не видно
-     point.isShow_point_menu_marker_color={'iconColor': '#79c142',
-     iconContent:"zz"}//цвет маркера поинта
+     point.isShow_point_menu_marker_color= {'iconColor': '#79c142',}//цвет маркера поинта
      points_temp.push(point);
   });
       this.points=points_temp;
