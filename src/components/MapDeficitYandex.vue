@@ -13,7 +13,7 @@
 :marker-id="point.id_point"
 :hint-content="point.name"
 :options="point.isShow_point_menu_marker_color"
-:properties="{iconContent: '22'}"
+:properties="{iconContent: point.purchase_desc[0].params_value}"
    ></ymap-marker>
 
   </yandex-map>
