@@ -15,7 +15,11 @@
 :options="point.isShow_point_menu_marker_color"
 :properties="{iconContent: point.purchase_desc[0].params_value}"
    ></ymap-marker>
-
+<ymap-marker v-if="coords_point_have_first_click" 
+:coords="coords_new_point"
+marker-id="5555"
+hint-content="some hint"
+></ymap-marker>
   </yandex-map>
   <div class="points_list" v-if="points_list_visible">
   <div class="info_point" :class="{info_point_active: point.isShow_point_menu}"  :id="point.id_point" v-for="(point,index) in points"
@@ -24,7 +28,27 @@
 <div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
 </div></div>
   </div>
+  <div class="wrap_button_point"><b-button variant="outline-primary add_point" v-on:click="add_Point" v-if="points_list_visible">Добавить точку</b-button></div>
+  <div class="wrap_coord_point" v-if="wrap_coord_point_visible">
+      
+    <p><label for="lan_field">широта: </label> <input type="text" v-model="lan" name="lan" id="lan_field"> <label for="lng_field"> долгота: </label><input type="text" v-model="lng" name="lng" id="lng_field"></p>
+          
+          
+          <p><label for="name_point_field">название точки:</label><input type="text" name="name_point" id="name_point_field"></p>
+          <p><label for="price_field">стоимость: </label><input type="text" name="price_" id="price_field"></p>
+          
+  <p> <label for="description_point_field">комментарий:</label><br><textarea name="description_point_" cols="40" rows="4" id="description_point_field"></textarea></p>
+
+    <button type="button" class="btn btn-primary save">сохранить</button>
+     <div class="wrap_out_add_point_x">
+       <button type="button" class="btn btn-danger out_add_point mr-1 out_add_point" @click="out_add_point"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button>
+     </div>
+     <div class="help_info_for_users_add_point">
+       Кликните на карте место торговой точки.
+     </div>
+  </div>
 </div>
+
 </template>
 
 <script>
@@ -34,7 +58,12 @@ export default {
   data() { 
   return{
     map_collection:{},
-  points_list_visible: false,  
+  points_list_visible: false,
+  wrap_coord_point_visible: false,
+  coords_point_have_first_click: false,
+  coords_new_point:[],
+  lan: null,  
+  lng: null,
 points: [],  
   center_coords: [47.23470683868971,39.72326724340817],
   }
@@ -134,13 +163,28 @@ point.purchase_desc.[i]=value[i];
     });
 
     },
+    add_Point(){
+      console.log("добавить точку");
+      this.wrap_coord_point_visible=true;
+      this.points_list_visible=false;
+    },
+    out_add_point(){
+      this.wrap_coord_point_visible=false;
+      this.points_list_visible=true;
+      this.coords_point_have_first_click=false;//убирает временный маркер
+    },
     mapInstance(e){
       this.map_collection=e;
       console.log("i am instans");
     },
     onClick(e) {
-      this.coords = e.get('coords');
-      this.name_cat=this.deficit;
+      if (this.wrap_coord_point_visible){
+      this.coords_new_point = e.get('coords');
+      this.coords_point_have_first_click=true;
+      //this.name_cat=this.deficit;
+      this.lan=this.coords_new_point[0];
+      this.lng=this.coords_new_point[1];
+      console.log("координаты маркера="+ this.coords);}
     }
   }
 };
@@ -207,4 +251,35 @@ point.purchase_desc.[i]=value[i];
     align-items: center;     /*Центрирование по вертикали */
     margin-left:4px;
 }
+.wrap_button_point{
+      height: 40px;
+    text-align: center;
+    margin-top: 10px;
+}
+/* окно добавления поинта */
+.wrap_coord_point{
+  border:1px solid #dc3545;
+  padding: 10px;
+  position: relative;
+
+}
+.wrap_coord_point input {
+  margin-left: 7px;
+}
+.wrap_out_add_point_x {
+  position: absolute;
+  top:-35px;
+}
+.help_info_for_users_add_point {
+  position: absolute;
+  top:-25px;
+  left: 60px;
+  font-style: italic;
+  border: 1px solid #ed8013;
+  border-radius: 15px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color:#fad178;
+}
+/* end окно добавлния поинта */
 </style>
