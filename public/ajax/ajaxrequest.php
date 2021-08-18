@@ -117,4 +117,48 @@ if ($_POST['label'] =='read_markers_sql'){
 }
 }
 
+if ($_POST['label']=='save_new_marker_sql') {
+    $name_point=$_POST['name_point'];
+    $comment=$_POST['description_point'];
+    $lan=$_POST['lan'];
+    $lng=$_POST['lng'];
+    $product=$_POST['product'];
+    $category='аптеки';
+    $product_price=$_POST['product_price'];
+    // проверка авторизации
+   if (check_hash($link,$_POST['hash'],$_POST['user_login']) != $_POST['user_login']) {
+    echo "not autorization";
+    return;
+   }
+    // подключение к mysql
+
+echo "пытаюсь записать $name_point || $lan ||$lng||$product||$category";
+  $insert = "INSERT INTO `deficit_points` (lan, lng, name, product, category) VALUES ('".$lan."','".$lng."','".$name_point."','".$product."', '".$category."')";
+
+
+   $res = mysqli_query($link, $insert);
+   if ($res) {echo " успешно записано в таблицу ТОЧКИ";} else {echo " не записано в таблицу ТОЧКИ error";}
+
+     $sql = "SELECT MAX(id_point) FROM deficit_points";
+     $res = mysqli_query($link,$sql);
+     $last_id = mysqli_fetch_assoc($res);
+      
+
+
+   $insert = "INSERT INTO `deficit_note` (id_point, purchase_descr) VALUES ('".$last_id['MAX(id_point)']."', '".$comment."')";
+       $res = mysqli_query($link, $insert);
+     if ($res) {echo "заметка успешно записана ";} else {echo " ЗАМЕТКА (NOTE) error";}
+    // узнаем id_note
+      $sql = "SELECT MAX(id_note) FROM deficit_note";
+         $res = mysqli_query($link,$sql);
+////           $last_note_id = mysqli_fetch_all($res); 
+           $last_note_id = mysqli_fetch_assoc($res); 
+                   //последний id в таблице deficit_note
+                   echo "последний id в таблице deficit_note(last_note_id['MAX(id_note)'])=".$last_note_id['MAX(id_note)'].";"; 
+                   print_arr($last_note_id);
+
+                $insert = "INSERT INTO `deficit_products_parametrs` (name_of_param, product, params_value, id_note) VALUES ('цена', '".$product."','".$product_price."','".$last_note_id['MAX(id_note)']."')";
+                   $res = mysqli_query($link, $insert);
+    
+}
 ?>

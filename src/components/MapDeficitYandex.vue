@@ -31,15 +31,15 @@ hint-content="some hint"
   <div class="wrap_button_point"><b-button variant="outline-primary add_point" v-on:click="add_Point" v-if="points_list_visible">Добавить точку</b-button></div>
   <div class="wrap_coord_point" v-if="wrap_coord_point_visible">
       
-    <p><label for="lan_field">широта: </label> <input type="text" v-model="lan" name="lan" id="lan_field"> <label for="lng_field"> долгота: </label><input type="text" v-model="lng" name="lng" id="lng_field"></p>
+    <p><label for="lan_field">широта: </label> <input class="red_border" type="text"  :class="{'border border-success': control_new_point_lan_lng_full} " v-model="lan" name="lan" id="lan_field"> <label for="lng_field"> долгота: </label><input class="red_border" :class="{'border border-success': control_new_point_lan_lng_full} " type="text" v-model="lng" name="lng" id="lng_field"></p>
           
           
-          <p><label for="name_point_field">название точки:</label><input type="text" name="name_point" id="name_point_field"></p>
-          <p><label for="price_field">стоимость: </label><input type="text" name="price_" id="price_field"></p>
+          <p><label for="name_point_field">название точки:</label><input class="red_border" :class="{'border border-success': control_length_of_point_name}" type="text" v-model="point_name"  id="name_point_field"><label for="name_point_field" v-if="!control_length_of_point_name" class="text-danger pl-1">min 3 символа</label></p>
+          <p><label for="price_field">стоимость: </label><input class="red_border" :class="{'border border-success': control_length_of_cost_of_good}" type="text" v-model="cost_of_good"  id="price_field"><label for="price_field" class="text-danger pl-1" v-if="!control_length_of_cost_of_good">min одна цифра </label></p>
           
-  <p> <label for="description_point_field">комментарий:</label><br><textarea name="description_point_" cols="40" rows="4" id="description_point_field"></textarea></p>
+  <p> <label for="description_point_field">комментарий:</label><br><textarea class="red_border" :class="{'border border-success': control_length_of_comment}" v-model="comment" name="description_point_" cols="40" rows="4" id="description_point_field"></textarea> <label for="description_point_field" class="text-danger pl-1" v-if="!control_length_of_comment">min 4 символа</label></p>
 
-    <button type="button" class="btn btn-primary save">сохранить</button>
+    <button type="button" class="btn btn-primary save" v-if="coords_point_have_first_click&&control_length_of_point_name&&control_length_of_cost_of_good&&control_length_of_comment" @click="save_new_point">сохранить</button>
      <div class="wrap_out_add_point_x">
        <button type="button" class="btn btn-danger out_add_point mr-1 out_add_point" @click="out_add_point"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button>
      </div>
@@ -64,6 +64,13 @@ export default {
   coords_new_point:[],
   lan: null,  
   lng: null,
+  point_name:'',
+  control_new_point_lan_lng_full:false,
+  control_length_of_point_name:false,
+  cost_of_good:'',
+  control_length_of_cost_of_good:false,
+  comment:'',
+  control_length_of_comment:false,
 points: [],  
   center_coords: [47.23470683868971,39.72326724340817],
   }
@@ -82,9 +89,27 @@ points: [],
       });
 		},
 		watch: {
-			deficit:function(){
+      point_name:function(){
+        if (this.point_name.length<3) {
+          this.control_length_of_point_name=false;
+        } else {this.control_length_of_point_name=true;}
+      },
+      cost_of_good:function(){
+        if (this.cost_of_good.length<1) {
+          this.control_length_of_cost_of_good=false;
+        } else {this.control_length_of_cost_of_good=true;}
+      },
+      comment:function(){
+        if (this.comment.length<4) {
+            this.control_length_of_comment=false;
+        } else {this.control_length_of_comment=true;}
+      },
+			deficit:function(){ // смена дефицита
        // this.mapInstance.myMap.geoObjects.removeAll();
-      // this.map_collection.geoObjects.removeAll();//вроде сработало 
+      // this.map_collection.geoObjects.removeAll();//вроде сработало
+      if (this.wrap_coord_point_visible) { //скрытие формы добавления поинта
+        this.out_add_point();
+      } 
         this.points_list_visible=true;
 				console.log('i am props from watch '+ this.deficit);
 				let user_login=localStorage.getItem('user_login'); 
@@ -172,6 +197,15 @@ point.purchase_desc.[i]=value[i];
       this.wrap_coord_point_visible=false;
       this.points_list_visible=true;
       this.coords_point_have_first_click=false;//убирает временный маркер
+      this.lan=null;
+      this.lng=null;
+      this.control_new_point_lan_lng_full=false;
+      this.point_name='';
+      this.control_length_of_point_name=false;
+      this.cost_of_good='';
+      this.control_length_of_cost_of_good=false;
+      this.comment='';
+      this.control_length_of_comment=false;
     },
     mapInstance(e){
       this.map_collection=e;
@@ -184,7 +218,13 @@ point.purchase_desc.[i]=value[i];
       //this.name_cat=this.deficit;
       this.lan=this.coords_new_point[0];
       this.lng=this.coords_new_point[1];
-      console.log("координаты маркера="+ this.coords);}
+      console.log("координаты маркера="+ this.coords);
+      this.control_new_point_lan_lng_full=true;
+   this.center_coords=this.coords_new_point;   
+    }
+    },
+    save_new_point(){
+      console.log("save_new_point");
     }
   }
 };
@@ -257,6 +297,9 @@ point.purchase_desc.[i]=value[i];
     margin-top: 10px;
 }
 /* окно добавления поинта */
+.red_border{
+  border: 1px solid red;
+} 
 .wrap_coord_point{
   border:1px solid #dc3545;
   padding: 10px;
