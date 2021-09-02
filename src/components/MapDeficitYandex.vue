@@ -225,6 +225,21 @@ point.purchase_desc.[i]=value[i];
     },
     save_new_point(){
       console.log("save_new_point");
+      let user_login=localStorage.getItem('user_login'); 
+ let user_hash=localStorage.getItem('user_hash');
+      const params = new URLSearchParams();
+     params.append('label', 'save_new_marker_sql'); 
+     params.append('user_login', user_login);
+     params.append('user_hash', user_hash);
+     params.append('description_point', this.comment);
+     params.append('lan', this.lan);
+     params.append('lng', this.lng);
+     params.append('product_price', this.cost_of_good);
+     params.append('name_point', this.point_name);
+     axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
+      console.log('ответ c базы о сохраненной точке');
+     console.log(response);
+     });
     }
   }
 };
