@@ -125,9 +125,10 @@ if ($_POST['label']=='save_new_marker_sql') {
     $product=$_POST['product'];
     $category='аптеки';
     $product_price=$_POST['product_price'];
+
     // проверка авторизации
-   if (check_hash($link,$_POST['hash'],$_POST['user_login']) != $_POST['user_login']) {
-    echo "not autorization";
+   if (check_hash($link,$_POST['user_hash'],$_POST['user_login']) != $_POST['user_login']) {
+    echo json_encode(array( "not autorization",$_POST['user_hash'],check_hash($link,$_POST['user_hash'],$_POST['user_login']),$_POST['user_login']));
     return;
    }
     // подключение к mysql
