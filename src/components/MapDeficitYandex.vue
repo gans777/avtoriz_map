@@ -236,6 +236,7 @@ point.purchase_desc.[i]=value[i];
      params.append('lng', this.lng);
      params.append('product_price', this.cost_of_good);
      params.append('name_point', this.point_name);
+     params.append('product', this.deficit);
      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
       console.log('ответ c базы о сохраненной точке');
      console.log(response);
