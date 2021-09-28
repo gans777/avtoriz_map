@@ -104,15 +104,18 @@ points: [],
             this.control_length_of_comment=false;
         } else {this.control_length_of_comment=true;}
       },
-			deficit:function(){ // смена дефицита
+			deficit:function(){this.drow_all_points();}
+		},
+   methods: {
+    drow_all_points(){ // смена дефицита
        // this.mapInstance.myMap.geoObjects.removeAll();
       // this.map_collection.geoObjects.removeAll();//вроде сработало
       if (this.wrap_coord_point_visible) { //скрытие формы добавления поинта
         this.out_add_point();
       } 
         this.points_list_visible=true;
-				console.log('i am props from watch '+ this.deficit);
-				let user_login=localStorage.getItem('user_login'); 
+        console.log('i am props from watch '+ this.deficit);
+        let user_login=localStorage.getItem('user_login'); 
  let user_hash=localStorage.getItem('user_hash');
  console.log(user_hash+' [hi from mapdeficityandex(mounted)] '+user_login);
  var params = new URLSearchParams();
@@ -153,9 +156,7 @@ point.purchase_desc.[i]=value[i];
     console.log("это массив компонента points=");
     console.log(this.points);
       });
-			}
-		},
-   methods: {
+      },
     point_menu(e){
       const attrValue = e.currentTarget.getAttribute('id');
       console.log("координаты центра карты:");
@@ -238,8 +239,11 @@ point.purchase_desc.[i]=value[i];
      params.append('name_point', this.point_name);
      params.append('product', this.deficit);
      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
-      console.log('ответ c базы о сохраненной точке');
      console.log(response);
+     this.out_add_point();
+    this.drow_all_points();
+    //stop here 24/09
+
      });
     }
   }
