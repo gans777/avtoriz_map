@@ -24,10 +24,11 @@ hint-content="some hint"
   <div class="points_list" v-if="points_list_visible">
   <div class="info_point" :class="{info_point_active: point.isShow_point_menu}"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
-  ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита'><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
+  ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита' @click="add_comment_about_purchase(point.id_point)"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
 <div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
 </div></div>
   </div>
+  
   <div class="wrap_button_point"><b-button variant="outline-primary add_point" v-on:click="add_Point" v-if="points_list_visible">Добавить точку</b-button></div>
   <div class="wrap_coord_point" v-if="wrap_coord_point_visible">
       
@@ -47,6 +48,24 @@ hint-content="some hint"
        Кликните на карте место торговой точки.
      </div>
   </div>
+  <!--модальное окно добавки отзыва о покупке-->
+  <b-modal id="modal-1" header-class="header_modal" body-class="body_modal" footer-class="footer_modal" >
+    <div class='wrap_add_comment_into_point'>
+      <div>стоимость:<input type='text' name='price' v-model="cost_of_good" id="price_field"><label for="price_field" class="text-danger pl-1" v-if="!control_length_of_cost_of_good">min одна цифра </label></div><div>комментарий</div><textarea name='description_point'  cols='40' rows='4' v-model="comment" id="description_point_field"></textarea><label for="description_point_field" class="text-danger pl-1" v-if="!control_length_of_comment">min 4 символа</label></div>
+      <template #modal-footer><b-button
+            variant="primary"
+            size="sm"
+            class="float-right"
+            @click="$bvModal.hide('modal-1')"
+          >
+            Close
+          </b-button>
+<b-button type="button" 
+variant="primary"
+class="float-right"
+ v-if="control_length_of_cost_of_good&&control_length_of_comment" @click="save_new_comment">сохранить</b-button>
+        </template>
+      </b-modal>
 </div>
 
 </template>
@@ -75,7 +94,7 @@ points: [],
   center_coords: [47.23470683868971,39.72326724340817],
   }
   },
-  mounted() {// нужене ли этот блок вообще???
+  mounted() {// нужен ли этот блок вообще???
  let user_login=localStorage.getItem('user_login'); 
  let user_hash=localStorage.getItem('user_hash');
  console.log(user_hash+' [hi from mapdeficityandex(mounted)] '+user_login);
@@ -107,6 +126,11 @@ points: [],
 			deficit:function(){this.drow_all_points();}
 		},
    methods: {
+    add_comment_about_purchase(id_point){
+      console.log("comment к товару из поинта "+id_point);
+      this.$bvModal.show("modal-1");
+
+    },
     drow_all_points(){ // смена дефицита
        // this.mapInstance.myMap.geoObjects.removeAll();
       // this.map_collection.geoObjects.removeAll();//вроде сработало
@@ -242,8 +266,7 @@ point.purchase_desc.[i]=value[i];
      console.log(response);
      this.out_add_point();
     this.drow_all_points();
-    //stop here 24/09
-
+    
      });
     }
   }
@@ -345,4 +368,19 @@ point.purchase_desc.[i]=value[i];
   background-color:#fad178;
 }
 /* end окно добавлния поинта */
+/*модальное окно добавления отзыва*/
+/deep/ .header_modal {
+ background: #bad954; 
+}
+/deep/ .body_modal{
+  background: #bad954;
+}
+.wrap_add_comment_into_point {
+  background: #bad954;/*цвет фона меню добовления отзыва rgb(73%, 85%, 33%, 0.9)*/
+  padding: 7px; 
+}
+/deep/ .footer_modal{
+  background: #bad954;
+}
+/*end модальное окно добавления отзыва*/
 </style>
