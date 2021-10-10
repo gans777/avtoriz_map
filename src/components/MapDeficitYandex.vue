@@ -24,7 +24,7 @@ hint-content="some hint"
   <div class="points_list" v-if="points_list_visible">
   <div class="info_point" :class="{info_point_active: point.isShow_point_menu}"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
-  ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита' @click="add_comment_about_purchase(point.id_point)"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
+  ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита' @click="add_comment_about_purchase(point.id_point,point.name,deficit)"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
 <div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
 </div></div>
   </div>
@@ -50,6 +50,7 @@ hint-content="some hint"
   </div>
   <!--модальное окно добавки отзыва о покупке-->
   <b-modal id="modal-1" header-class="header_modal" body-class="body_modal" footer-class="footer_modal" >
+    <template #modal-header> <h3> <b-badge variant="secondary">{{add_comment_about_purchase_data_this.point_name}}</b-badge></h3><h3><b-badge variant="info">{{deficit}}</b-badge></h3><b-button variant="danger" @click="$bvModal.hide('modal-1')"><i class="fa fa-times fa-lg" aria-hidden="true"></i></b-button> </template>
     <div class='wrap_add_comment_into_point'>
       <div>стоимость:<input type='text' name='price' v-model="cost_of_good" id="price_field"><label for="price_field" class="text-danger pl-1" v-if="!control_length_of_cost_of_good">min одна цифра </label></div><div>комментарий</div><textarea name='description_point'  cols='40' rows='4' v-model="comment" id="description_point_field"></textarea><label for="description_point_field" class="text-danger pl-1" v-if="!control_length_of_comment">min 4 символа</label></div>
       <template #modal-footer><b-button
@@ -61,9 +62,9 @@ hint-content="some hint"
             Close
           </b-button>
 <b-button type="button" 
-variant="primary"
+variant="success"
 class="float-right"
- v-if="control_length_of_cost_of_good&&control_length_of_comment" @click="save_new_comment">сохранить</b-button>
+ v-if="control_length_of_cost_of_good&&control_length_of_comment" @click="save_new_comment_about_purchase_in_out_modal">сохранить</b-button>
         </template>
       </b-modal>
 </div>
@@ -77,6 +78,8 @@ export default {
   data() { 
   return{
     map_collection:{},
+    add_comment_about_purchase_data_this:{},
+    last_add_point: null,
   points_list_visible: false,
   wrap_coord_point_visible: false,
   coords_point_have_first_click: false,
@@ -126,8 +129,47 @@ points: [],
 			deficit:function(){this.drow_all_points();}
 		},
    methods: {
-    add_comment_about_purchase(id_point){
-      console.log("comment к товару из поинта "+id_point);
+    save_new_comment_about_purchase_in_out_modal(){
+      var params = new URLSearchParams();
+      let user_login=localStorage.getItem('user_login'); 
+       let user_hash=localStorage.getItem('user_hash');
+       let tmp_purchase_desc={};
+       tmp_purchase_desc.data_note="мин.назад";
+       tmp_purchase_desc.params_value=this.cost_of_good;
+       tmp_purchase_desc.purchase_descr=this.comment;
+ console.log("id_point="+this.add_comment_about_purchase_data_this.id_point);
+     params.append('label', 'save_new_comment_about_purchase_sql'); 
+     params.append('user_login', user_login);//поставить проверку!
+     params.append('user_hash', user_hash);
+     params.append('id_point', this.add_comment_about_purchase_data_this.id_point);
+     params.append('comment', this.comment);
+     params.append('product_price', this.cost_of_good);     
+      console.log('save_new_comment');
+this.$bvModal.hide("modal-1");
+      axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
+        console.log('должно записаться в базу');
+        console.log(response);
+        console.log("содержание массива points=");
+        console.log(this.points);
+
+        this.points.some(elem =>{ 
+          if (elem.id_point==this.add_comment_about_purchase_data_this.id_point){
+          console.log(elem.id_point+" =id_point ; cодержание массива elem.purchase_desc,а длина его="+Object.keys(elem.purchase_desc).length);
+            elem.purchase_desc[Object.keys(elem.purchase_desc).length]=tmp_purchase_desc;
+          console.log(elem.purchase_desc);
+          //this.point_menu();
+          //stop here 5/10(переписать point_menu без намеков на jquery)
+          return
+          }
+        });
+      });
+    },
+    add_comment_about_purchase(id_point,point_name,deficit){
+      console.log("comment к товару из поинта "+id_point+' '+point_name+' '+deficit);
+      this.add_comment_about_purchase_data_this.id_point=id_point;
+      this.add_comment_about_purchase_data_this.point_name=point_name;
+      this.comment='';
+      this.cost_of_good='';
       this.$bvModal.show("modal-1");
 
     },

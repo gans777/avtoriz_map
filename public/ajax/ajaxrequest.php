@@ -162,4 +162,24 @@ echo "пытаюсь записать $name_point || $lan ||$lng||$product||$cat
                    $res = mysqli_query($link, $insert);
     
 }
+
+if ($_POST['label']=='save_new_comment_about_purchase_sql') {
+    //вставить проверку логин\пароль
+              $insert = "INSERT INTO `deficit_note` (purchase_descr, id_point) VALUES ('".$_POST['comment']."', '".$_POST['id_point']."')";
+                $res = mysqli_query($link, $insert);
+                 $sql = "SELECT MAX(id_note) FROM deficit_note";
+                  $res = mysqli_query($link,$sql);
+                    $last_note_id = mysqli_fetch_assoc($res);
+                        $product='тофф++';
+                      $insert = "INSERT INTO `deficit_products_parametrs` (name_of_param, product, params_value, id_note) VALUES ('цена', '".$product."','".$_POST['product_price']."','".$last_note_id['MAX(id_note)']."')";
+                        $res = mysqli_query($link, $insert);
+                              //считывание цены и комментариев о покупках в ЭТОЙ точке
+                         // $sql= "SELECT id_note,purchase_descr,data_note FROM note WHERE id_point='".$_POST['id_point']."'";
+                           $sql="SELECT deficit_note.id_note,deficit_note.purchase_descr,deficit_note.data_note,deficit_products_parametrs.params_value FROM deficit_note JOIN deficit_products_parametrs WHERE deficit_note.id_point='".$_POST['id_point']."' AND deficit_note.id_note=deficit_products_parametrs.id_note";
+                             $res = mysqli_query($link, $sql);
+                               $all_this_note=MysqliFetchAll($res);
+                               //добавление цены из таблицы params_value
+                                 echo json_encode($all_this_note);
+}
+
 ?>
