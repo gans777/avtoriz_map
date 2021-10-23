@@ -25,7 +25,11 @@ hint-content="some hint"
   <div class="info_point" :class="{info_point_active: point.isShow_point_menu}"  :id="point.id_point" v-for="(point,index) in points"
 :key="index"
   ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита' @click="add_comment_about_purchase(point.id_point,point.name,deficit)"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
-<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note"></div></div>
+  <div class="wrap_all_note_this">
+<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note">
+  <i class="fa fa-trash" aria-hidden="true"></i>
+</div></div>
+</div>
 </div></div>
   </div>
   
@@ -134,12 +138,12 @@ points: [],
       let user_login=localStorage.getItem('user_login'); 
        let user_hash=localStorage.getItem('user_hash');
        let tmp_purchase_desc={};
-       tmp_purchase_desc.data_note="мин.назад";
+       tmp_purchase_desc.data_note="только что";
        tmp_purchase_desc.params_value=this.cost_of_good;
        tmp_purchase_desc.purchase_descr=this.comment;
  console.log("id_point="+this.add_comment_about_purchase_data_this.id_point);
      params.append('label', 'save_new_comment_about_purchase_sql'); 
-     params.append('user_login', user_login);//поставить проверку!
+     params.append('user_login', user_login);//поставить проверку!!!
      params.append('user_hash', user_hash);
      params.append('id_point', this.add_comment_about_purchase_data_this.id_point);
      params.append('comment', this.comment);
@@ -157,11 +161,11 @@ this.$bvModal.hide("modal-1");
           console.log(elem.id_point+" =id_point ; cодержание массива elem.purchase_desc,а длина его="+Object.keys(elem.purchase_desc).length);
             elem.purchase_desc[Object.keys(elem.purchase_desc).length]=tmp_purchase_desc;
           console.log(elem.purchase_desc);
-          //this.point_menu();
-          //stop here 5/10(переписать point_menu без намеков на jquery)
+          this.point_menu_core(this.add_comment_about_purchase_data_this.id_point);
           return
           }
         });
+        //this.point_menu();
       });
     },
     add_comment_about_purchase(id_point,point_name,deficit){
@@ -223,9 +227,8 @@ point.purchase_desc.[i]=value[i];
     console.log(this.points);
       });
       },
-    point_menu(e){
-      const attrValue = e.currentTarget.getAttribute('id');
-      console.log("координаты центра карты:");
+      point_menu_core(attrValue){
+console.log("координаты центра карты:");
       console.log(this.center_coords);
       let center_coords_temp=[];
       this.points.forEach(function(value){
@@ -243,6 +246,10 @@ point.purchase_desc.[i]=value[i];
             value.isShow_point_menu_marker_color={'iconColor': '#79c142'};}
     });
      this.center_coords=center_coords_temp;
+      },
+    point_menu(e){
+      const attrValue = e.currentTarget.getAttribute('id');
+       this.point_menu_core(attrValue);
     },
     close_this_point_menu(e){
     const attrValue = e.currentTarget.closest(".info_point").getAttribute('id');
@@ -344,6 +351,10 @@ point.purchase_desc.[i]=value[i];
   width: 220px;
   padding:5px;
 }
+.wrap_all_note_this{
+   display: flex;
+    flex-direction:  column-reverse ;
+}
 .wrap_note_this{
 	display: flex;
 	border:1px solid #246e1f;
@@ -352,6 +363,11 @@ point.purchase_desc.[i]=value[i];
 	padding: 3px;
 	background-color:#bada55;
 	justify-content: space-between;
+  align-items: center;
+}
+.delete_this_note{
+  padding: 4px,2px;
+  font-size: 12px;
 }
 .note_this{
 
