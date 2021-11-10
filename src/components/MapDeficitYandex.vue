@@ -26,7 +26,7 @@ hint-content="some hint"
 :key="index"
   ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита' @click="add_comment_about_purchase(point.id_point,point.name,deficit)"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
   <div class="wrap_all_note_this">
-<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note">
+<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note" @click="delete_this_comment(pur_desc,point.name)" :id="pur_desc.id_note">
   <i class="fa fa-trash" aria-hidden="true"></i>
 </div></div>
 </div>
@@ -57,7 +57,8 @@ hint-content="some hint"
     <template #modal-header> <h3> <b-badge variant="secondary">{{add_comment_about_purchase_data_this.point_name}}</b-badge></h3><h3><b-badge variant="info">{{deficit}}</b-badge></h3><b-button variant="danger" @click="$bvModal.hide('modal-1')"><i class="fa fa-times fa-lg" aria-hidden="true"></i></b-button> </template>
     <div class='wrap_add_comment_into_point'>
       <div>стоимость:<input type='text' name='price' v-model="cost_of_good" id="price_field"><label for="price_field" class="text-danger pl-1" v-if="!control_length_of_cost_of_good">min одна цифра </label></div><div>комментарий</div><textarea name='description_point'  cols='40' rows='4' v-model="comment" id="description_point_field"></textarea><label for="description_point_field" class="text-danger pl-1" v-if="!control_length_of_comment">min 4 символа</label></div>
-      <template #modal-footer><b-button
+      <template #modal-footer>
+        <b-button
             variant="primary"
             size="sm"
             class="float-right"
@@ -71,6 +72,17 @@ class="float-right"
  v-if="control_length_of_cost_of_good&&control_length_of_comment" @click="save_new_comment_about_purchase_in_out_modal">сохранить</b-button>
         </template>
       </b-modal>
+
+      <!--модальное окно для удаления отзыва-->
+      <b-modal id="bv-modal-delete-this-comment" hide-footer>
+    <template #modal-title>
+      <code>{{delete_this_comment_data.point_name}}</code> 
+    </template>
+    <div class="d-block text-center">
+      <h3>Hello From This Modal!</h3>
+    </div>
+    <b-button class="mt-3" block @click="$bvModal.hide('bv-modal-delete-this-comment')">Close Me</b-button>
+  </b-modal>
 </div>
 
 </template>
@@ -82,6 +94,7 @@ export default {
   data() { 
   return{
     map_collection:{},
+    delete_this_comment_data:{},
     add_comment_about_purchase_data_this:{},
     last_add_point: null,
   points_list_visible: false,
@@ -133,6 +146,15 @@ points: [],
 			deficit:function(){this.drow_all_points();}
 		},
    methods: {
+    delete_this_comment(note,point_name){
+      note.point_name=point_name;
+      this.delete_this_comment_data=note;
+     // let index_this_comment = e.currentTarget.getAttribute('id');
+       console.log(this.delete_this_comment_data);
+     // console.log("i am delete_this_comment- index="+index_this_comment+" "+note);
+     //stop here 4/11
+      this.$bvModal.show('bv-modal-delete-this-comment');
+    },
     save_new_comment_about_purchase_in_out_modal(){
       var params = new URLSearchParams();
       let user_login=localStorage.getItem('user_login'); 

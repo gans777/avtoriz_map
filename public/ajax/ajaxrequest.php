@@ -182,4 +182,20 @@ if ($_POST['label']=='save_new_comment_about_purchase_sql') {
                                  echo json_encode($all_this_note);
 }
 
+if ($_POST['label']=='delete_purchase_descr_sql') { //delete this comment
+  $id_note=$_POST['id_note'];
+   $sql="DELETE FROM deficit_note WHERE id_note=$id_note";
+    if (mysqli_query($link, $sql)) {
+    echo "Record deleted successfully from NOTE.";
+} else {
+    echo "Error deleting record: note " . mysqli_error($link);
+}
+    $sql="DELETE FROM deficit_products_parametrs WHERE id_note=$id_note";
+      if (mysqli_query($link, $sql)) {
+    echo "Record deleted successfully from products_parametrs.";
+} else {
+    echo "Error deleting record: products_parametrs " . mysqli_error($link);
+}
+ 
+}
 ?>
