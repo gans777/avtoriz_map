@@ -79,9 +79,9 @@ class="float-right"
       <code>{{delete_this_comment_data.point_name}}</code> 
     </template>
     <div class="d-block text-center">
-      <h3>Hello From This Modal!</h3>
+      <div class="wrap_note_this" ><div class="note_this">{{delete_this_comment_data.purchase_descr}}</div><div class="data_note">{{delete_this_comment_data.data_note}}</div><div class="last_price">{{delete_this_comment_data.params_value}}</div></div>
     </div>
-    <b-button class="mt-3" block @click="$bvModal.hide('bv-modal-delete-this-comment')">Close Me</b-button>
+    <b-button class="mt-3" block @click="delete_this_comment_in_mysql">удалить этот отзыв</b-button>
   </b-modal>
 </div>
 
@@ -146,13 +146,15 @@ points: [],
 			deficit:function(){this.drow_all_points();}
 		},
    methods: {
+    delete_this_comment_in_mysql(){
+      console.log('hi');//stop here11.11
+    },
     delete_this_comment(note,point_name){
       note.point_name=point_name;
       this.delete_this_comment_data=note;
      // let index_this_comment = e.currentTarget.getAttribute('id');
        console.log(this.delete_this_comment_data);
-     // console.log("i am delete_this_comment- index="+index_this_comment+" "+note);
-     //stop here 4/11
+     
       this.$bvModal.show('bv-modal-delete-this-comment');
     },
     save_new_comment_about_purchase_in_out_modal(){
@@ -389,6 +391,7 @@ console.log("координаты центра карты:");
 }
 .delete_this_note{
   padding: 4px,2px;
+  margin-left:2px;
   font-size: 12px;
 }
 .note_this{
