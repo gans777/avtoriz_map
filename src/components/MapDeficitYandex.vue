@@ -75,13 +75,16 @@ class="float-right"
 
       <!--модальное окно для удаления отзыва-->
       <b-modal id="bv-modal-delete-this-comment" hide-footer>
+
     <template #modal-title>
       <code>{{delete_this_comment_data.point_name}}</code> 
     </template>
     <div class="d-block text-center">
       <div class="wrap_note_this" ><div class="note_this">{{delete_this_comment_data.purchase_descr}}</div><div class="data_note">{{delete_this_comment_data.data_note}}</div><div class="last_price">{{delete_this_comment_data.params_value}}</div></div>
     </div>
-    <b-button class="mt-3" block @click="delete_this_comment_in_mysql">удалить этот отзыв</b-button>
+    <b-spinner variant="success" label="Spinning" v-if="spinner_delete_this_comment_data"></b-spinner>
+    <b-button class="mt-3" block @click="delete_this_comment_in_mysql" v-else>удалить этот отзыв</b-button>
+    
   </b-modal>
 </div>
 
@@ -95,6 +98,7 @@ export default {
   return{
     map_collection:{},
     delete_this_comment_data:{},
+    spinner_delete_this_comment_data:false,
     add_comment_about_purchase_data_this:{},
     last_add_point: null,
   points_list_visible: false,
@@ -147,18 +151,34 @@ points: [],
 		},
    methods: {
     delete_this_comment_in_mysql(){
-      console.log('hi');//stop here11.11
+      console.log('hi-delete_this_comment_in_mysql');//stop here11.11
+      let user_login=localStorage.getItem('user_login'); 
+    let user_hash=localStorage.getItem('user_hash');
+    let params = new URLSearchParams();
+    params.append('label', 'delete_purchase_descr_sql'); 
+    params.append('user_login', user_login);//поставить проверку!!!
+    params.append('user_hash', user_hash);
+    params.append('id_note', this.delete_this_comment_data.id_note);
+    console.log('id_note='+this.delete_this_comment_data.id_note);
+    this.delete_this_comment_data=true;
+    axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
+      console.log("ответ от удаления");
+      console.log(response);
+      this.delete_this_comment_data=false;
+      this.$bvModal.hide('bv-modal-delete-this-comment');//stop here 15/11  спинер проверить 
+
+     });
     },
     delete_this_comment(note,point_name){
       note.point_name=point_name;
       this.delete_this_comment_data=note;
      // let index_this_comment = e.currentTarget.getAttribute('id');
        console.log(this.delete_this_comment_data);
-     
-      this.$bvModal.show('bv-modal-delete-this-comment');
+     this.$bvModal.show('bv-modal-delete-this-comment');
+
     },
     save_new_comment_about_purchase_in_out_modal(){
-      var params = new URLSearchParams();
+      
       let user_login=localStorage.getItem('user_login'); 
        let user_hash=localStorage.getItem('user_hash');
        let tmp_purchase_desc={};
@@ -166,6 +186,7 @@ points: [],
        tmp_purchase_desc.params_value=this.cost_of_good;
        tmp_purchase_desc.purchase_descr=this.comment;
  console.log("id_point="+this.add_comment_about_purchase_data_this.id_point);
+ let params = new URLSearchParams();
      params.append('label', 'save_new_comment_about_purchase_sql'); 
      params.append('user_login', user_login);//поставить проверку!!!
      params.append('user_hash', user_hash);
