@@ -26,7 +26,7 @@ hint-content="some hint"
 :key="index"
   ><span v-on:click="point_menu" :id="point.id_point" >{{index+1}}.{{point.name}} id_point={{point.id_point}}</span><div class="wrap_dropdown_info" v-if="point.isShow_point_menu"> <div class="wrap_close_and_addinfo"><button type="button" class="close_wrap_dropdown_info btn btn-success" v-on:click="close_this_point_menu"><i class="fa fa-times fa-lg" aria-hidden="true"></i></button> <button type='button' class='add_info btn btn-info' title='записать отзыв о покупке/наличии дефицита' @click="add_comment_about_purchase(point.id_point,point.name,deficit)"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i> куплено</button> <button type='button' class='btn btn-secondary edit_point'><i class="fa fa-cog fa-lg" aria-hidden="true"></i></button></div>
   <div class="wrap_all_note_this">
-<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note" @click="delete_this_comment(pur_desc,point.name)" :id="pur_desc.id_note">
+<div class="wrap_note_this" v-for="(pur_desc,ind) in point.purchase_desc" :key="ind" ><div class="note_this">{{pur_desc.purchase_descr}}</div><div class="data_note">{{pur_desc.data_note}}</div><div class="last_price">{{pur_desc.params_value}}</div><div class="delete_this_note" @click="delete_this_comment(pur_desc,point.name,index,ind)" :id="pur_desc.id_note">
   <i class="fa fa-trash" aria-hidden="true"></i>
 </div></div>
 </div>
@@ -151,7 +151,7 @@ points: [],
 		},
    methods: {
     delete_this_comment_in_mysql(){
-      console.log('hi-delete_this_comment_in_mysql');//stop here11.11
+      console.log('hi-delete_this_comment_in_mysql');
       let user_login=localStorage.getItem('user_login'); 
     let user_hash=localStorage.getItem('user_hash');
     let params = new URLSearchParams();
@@ -159,18 +159,45 @@ points: [],
     params.append('user_login', user_login);//поставить проверку!!!
     params.append('user_hash', user_hash);
     params.append('id_note', this.delete_this_comment_data.id_note);
-    console.log('id_note='+this.delete_this_comment_data.id_note);
-    this.delete_this_comment_data=true;
+    console.log('id_note='+this.delete_this_comment_data.id_note+' id_point='+this.delete_this_comment_data.id_point);
+    //this.delete_this_comment_data=true;
     axios.post('http://avtorizmap/ajax/ajaxrequest.php', params).then(response => {
       console.log("ответ от удаления");
       console.log(response);
-      this.delete_this_comment_data=false;
-      this.$bvModal.hide('bv-modal-delete-this-comment');//stop here 15/11  спинер проверить 
-
+      //this.delete_this_comment_data=false;
+      this.$bvModal.hide('bv-modal-delete-this-comment');//  спинер поставить
+      console.log('delete_this_comment_in_mysql');
+      console.log(this.points);//stop here 15.01 удалить по id_note из points
+      console.log('id_note='+this.delete_this_comment_data.id_note+' id_point='+this.delete_this_comment_data.id_point);
+      var tmp_points=[];
+      //var tmp_point=[];
+      tmp_points=this.points;
+      console.log('tmp_points')
+      console.log(tmp_points);
+      console.log('index point in points='+this.delete_this_comment_data.index_point+'индекс в purchase_desc='+this.delete_this_comment_data.ind);
+      console.log(this.tmp_points[this.delete_this_comment_data.index_point].purchase_desc);//1601 stop here
+      //this.points=tmp_points;
+     // let index_point=tmp_points.indexOf(function(value){
+      //  this.delete_this_comment_data.id_point});
+     // }
+      //console.log(index_point);
+      
+      /*
+      let check=tmp_points.some(function(value){
+        console.log(value.id_point+" внутри tmp_points "+this.delete_this_comment_data.id_point);
+          if (value.id_point==this.delete_this_comment_data.id_point){
+            console.log('совпало'+this.delete_this_comment_data.id_point);
+            return true;
+          } else {return false}
+      });
+      */
+      //console.log(check);
      });
     },
-    delete_this_comment(note,point_name){
+    delete_this_comment(note,point_name,index,ind){
       note.point_name=point_name;
+      note.index_point=index;
+      note.ind=ind;
       this.delete_this_comment_data=note;
      // let index_this_comment = e.currentTarget.getAttribute('id');
        console.log(this.delete_this_comment_data);
